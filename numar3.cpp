@@ -44,7 +44,7 @@ void imparteNumarMareLaNumarMic(
 	NumarMare & cat)
 {
 	// cat = a/numarMic
-	if (a.nrCifre == 1 && a.cifre[0] == 0
+	if ((a.nrCifre == 1 && a.cifre[0] == 0)
 		|| numarMic == 0)
 	{
 		cat.cifre[0] = 0;
@@ -75,13 +75,17 @@ void determinaNumereleAB(
 	NumarMare & b)
 {
 	while (esteDiferitDeZero(a)
-	       && ultimaCifraDivizibilaCu(2, a))
+	       && esteDiferitDeZero(b)
+	       && ultimaCifraDivizibilaCu(2, a)
+	       && ultimaCifraDivizibilaCu(2, b))
 	{
 		imparteNumarMareLaNumarMic(a, 2, a);
 		imparteNumarMareLaNumarMic(b, 2, b);
 	}
 	while (esteDiferitDeZero(a)
-	       && ultimaCifraDivizibilaCu(5, a))
+	       && esteDiferitDeZero(b)
+	       && ultimaCifraDivizibilaCu(5, a)
+	       && ultimaCifraDivizibilaCu(5, b))
 	{
 		imparteNumarMareLaNumarMic(a, 5, a);
 		imparteNumarMareLaNumarMic(b, 5, b);
