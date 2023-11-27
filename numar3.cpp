@@ -10,8 +10,6 @@ void citesteDateleDeIntrare(
 	NumarMare &,
 	NumarMare &);
 void determinaNumereleAB(
-	NumarMare,
-	NumarMare,
 	NumarMare &,
 	NumarMare &);
 void afiseazaNumarMare(
@@ -19,9 +17,9 @@ void afiseazaNumarMare(
 	ostream &);
 int main()
 {
-	NumarMare c, p10, a, b;
-	citesteDateleDeIntrare(c, p10);
-	determinaNumereleAB(c, p10, a, b);
+	NumarMare a, b;
+	citesteDateleDeIntrare(a, b);
+	determinaNumereleAB(a, b);
 	ofstream scrie("numar3.out");
 	scrie << a.nrCifre << endl;
 	afiseazaNumarMare(a, scrie);
@@ -29,147 +27,6 @@ int main()
 	afiseazaNumarMare(b, scrie);
 	scrie.close();
 	return 0;
-}
-int comparaNumereMari(NumarMare a, NumarMare b)
-{
-	if (a.nrCifre < b.nrCifre)
-	{
-		return -1;
-	}
-	if (a.nrCifre > b.nrCifre)
-	{
-		return 1;
-	}
-	int i;
-	for (i = a.nrCifre - 1;
-	     i >= 0 && a.cifre[i] == b.cifre[i]; i--);
-	if (i < 0)
-	{
-		return 0;
-	}
-	if (a.cifre[i] < b.cifre[i])
-	{
-		return -1;
-	}
-	return 1;
-}
-void adunaNumereMari(
-	NumarMare a,
-	NumarMare b,
-	NumarMare & suma)
-{
-	// suma = a+b
-	suma.nrCifre = a.nrCifre > b.nrCifre
-	               ? a.nrCifre
-		       : b.nrCifre;
-	int i;
-	if (a.nrCifre < b.nrCifre)
-	{
-		for (i = a.nrCifre; i < b.nrCifre; i++)
-		{
-			a.cifre[i] = 0;
-		}
-	}
-	if (b.nrCifre < a.nrCifre)
-	{
-		for (i = b.nrCifre; i < a.nrCifre; i++)
-		{
-			b.cifre[i] = 0;
-		}
-	}
-	int transport = 0;
-	for (i = 0; i < suma.nrCifre; i++)
-	{
-		int valoare = a.cifre[i]
-		              + b.cifre[i]
-			      + transport;
-		suma.cifre[i] = valoare % 10;
-		transport = valoare / 10;
-	}
-	if (transport != 0)
-	{
-		suma.cifre[suma.nrCifre++] = transport;
-	}
-}
-void scadeNumereMari(
-	NumarMare a,
-	NumarMare b,
-	NumarMare & diferenta)
-{
-	// diferenta = a-b
-	diferenta.nrCifre = a.nrCifre;
-	int i;
-	for (i = b.nrCifre; i < a.nrCifre; i++)
-	{
-		b.cifre[i] = 0;
-	}
-	int transport = 0;
-	for (i = 0; i < diferenta.nrCifre; i++)
-	{
-		int cifra = a.cifre[i]
-		            - b.cifre[i]
-			    - transport;
-		if (cifra < 0)
-		{
-			cifra += 10;
-			transport = 1;
-		}
-		else
-		{
-			transport = 0;
-		}
-		diferenta.cifre[i] = cifra;
-	}
-	for (i = diferenta.nrCifre-1;
-	     i > 0 && diferenta.cifre[i] == 0; i--);
-	diferenta.nrCifre = i+1;
-}
-void imparteNumereMari(
-	NumarMare a,
-	NumarMare b,
-	NumarMare & cat)
-{
-	// cat = a/b
-	NumarMare zero, unu;
-	zero.nrCifre = 1, zero.cifre[0] = 0;
-	unu.nrCifre = 1, unu.cifre[0] = 1;
-	// cat = 0
-	scadeNumereMari(zero, zero, cat);
-	// while (a >= b)
-	while (comparaNumereMari(a, b) >= 0)
-	{
-		// a = a-b
-		scadeNumereMari(a, b, a);
-		// cat++
-		adunaNumereMari(cat, unu, cat);
-	}
-}
-void celMaiMareDivizorComun(
-	NumarMare a,
-	NumarMare b,
-	NumarMare & cmmdc)
-{
-	// cmmdc = cmmdc(a, b)
-	int compara;
-	do
-	{
-		compara = comparaNumereMari(a, b);
-		if (compara > 0)
-		{
-			// a = a-b
-			scadeNumereMari(a, b, a);
-		}
-		else
-		{
-			// b = b-a
-			scadeNumereMari(b, a, b);
-		}
-	} while (compara != 0);
-	cmmdc.nrCifre = a.nrCifre;
-	for (int i = 0; i < a.nrCifre; i++)
-	{
-		cmmdc.cifre[i] = a.cifre[i];
-	}
 }
 void afiseazaNumarMare(
 	NumarMare a,
@@ -181,21 +38,56 @@ void afiseazaNumarMare(
 	}
 	scrie << endl;
 }
+void imparteNumarMareLaNumarMic(
+	NumarMare a,
+	int numarMic,
+	NumarMare & cat)
+{
+	// cat = a/numarMic
+	if (a.nrCifre == 1 && a.cifre[0] == 0
+		|| numarMic == 0)
+	{
+		cat.cifre[0] = 0;
+		cat.nrCifre = 1;
+		return;
+	}
+	int rest = 0;
+	for (int i = a.nrCifre-1; i >= 0; i--)
+	{
+		int valoare = rest*10 + a.cifre[i];
+		cat.cifre[i] = valoare/numarMic;
+		rest = valoare%numarMic;
+	}
+	for (cat.nrCifre = a.nrCifre;
+	     cat.nrCifre > 1 && cat.cifre[cat.nrCifre-1] == 0;
+	     cat.nrCifre--);
+}
+bool esteDiferitDeZero(NumarMare a)
+{
+	return !(a.nrCifre == 1 && a.cifre[0] == 0); 
+}
+bool ultimaCifraDivizibilaCu(int x, NumarMare a)
+{
+	return a.cifre[0] % x == 0;
+}
 void determinaNumereleAB(
-	NumarMare c,
-	NumarMare p10,
 	NumarMare & a,
 	NumarMare & b)
 {
-	NumarMare cmmdc;
-	// cmmdc = cmmdc(c, p10)
-	celMaiMareDivizorComun(c, p10, cmmdc);
-	// a = c/cmmdc
-	imparteNumereMari(c, cmmdc, a);
-	// b = p10/cmmdc
-	imparteNumereMari(p10, cmmdc, b);
+	while (esteDiferitDeZero(a)
+	       && ultimaCifraDivizibilaCu(2, a))
+	{
+		imparteNumarMareLaNumarMic(a, 2, a);
+		imparteNumarMareLaNumarMic(b, 2, b);
+	}
+	while (esteDiferitDeZero(a)
+	       && ultimaCifraDivizibilaCu(5, a))
+	{
+		imparteNumarMareLaNumarMic(a, 5, a);
+		imparteNumarMareLaNumarMic(b, 5, b);
+	}
 }
-void citesteDateleDeIntrare(NumarMare & c, NumarMare & p10)
+void citesteDateleDeIntrare(NumarMare & a, NumarMare & b)
 {
 	ifstream citeste("numar3.in");
 	int nrCifreParteIntreaga,
@@ -214,22 +106,22 @@ void citesteDateleDeIntrare(NumarMare & c, NumarMare & p10)
 	}
 	// Notez PI(q) partea intreaga a numarului rational q
 	// Notez PZ(q) partea zecimala a numarului rational q
-	// c = numarul format prin "lipirea lui PI(q) cu PZ(q)
-	// p10 = 10^(nrCifre(PZ(q)))
+	// a = numarul format prin "lipirea lui PI(q) cu PZ(q)
+	// b = 10^(nrCifre(PZ(q)))
 	for (i = nrCifreParteZecimala-1;
 	     cifreParteZecimala[i] == 0 && i >= 0;
 	     i--);
-	c.nrCifre = 0;
+	a.nrCifre = 0;
 	while (i >= 0)
 	{
-		c.cifre[c.nrCifre++] = cifreParteZecimala[i];
+		a.cifre[a.nrCifre++] = cifreParteZecimala[i];
 		i--;
 	}
-	p10.nrCifre = c.nrCifre + 1;
-	p10.cifre[p10.nrCifre-1] = 1;
-	for (i = 0; i < p10.nrCifre-1; i++)
+	b.nrCifre = a.nrCifre + 1;
+	b.cifre[b.nrCifre-1] = 1;
+	for (i = 0; i < b.nrCifre-1; i++)
 	{
-		p10.cifre[i] = 0;
+		b.cifre[i] = 0;
 	}
 	int j;
 	for (j = 0;
@@ -237,7 +129,7 @@ void citesteDateleDeIntrare(NumarMare & c, NumarMare & p10)
 	     && j < nrCifreParteIntreaga; j++);
 	for (i = nrCifreParteIntreaga - 1; i >= j; i--)
 	{
-		c.cifre[c.nrCifre++] = cifreParteIntreaga[i];
+		a.cifre[a.nrCifre++] = cifreParteIntreaga[i];
 	}
 	citeste.close();
 }
